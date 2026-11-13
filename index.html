@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteFlow — Your Space</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #0b0d12;
+  --panel: #12151d;
+  --card: #171b25;
+  --border: #262b38;
+  --text: #f1f3fa;
+  --muted: #9299aa;
+  --accent: #9875ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 245px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  margin: 0 0 45px 8px;
+  letter-spacing: -1px;
+}
+
+.logo span { color: var(--accent); }
+
+.nav-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin: 0 0 12px 10px;
+}
+
+.nav-item {
+  padding: 12px;
+  border-radius: 9px;
+  margin-bottom: 5px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: .2s;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: #262039;
+  color: #c9baff;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 12px;
+}
+
+.main {
+  flex: 1;
+  padding: 38px 5%;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 45px;
+}
+
+.greeting h1 {
+  font-size: 29px;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.greeting p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.search {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 12px 15px;
+  border-radius: 10px;
+  color: white;
+  outline: none;
+  width: 210px;
+}
+
+.search:focus, .editor-input:focus {
+  border-color: var(--accent);
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.new-btn {
+  background: var(--accent);
+  color: white;
+  padding: 12px 19px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.new-btn:hover { background: #8059ed; }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  font-size: 17px;
+  margin: 0;
+}
+
+.section-heading span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  gap: 17px;
+}
+
+.note-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  min-height: 185px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.note-card:hover {
+  transform: translateY(-3px);
+  border-color: #62508e;
+}
+
+.note-card h3 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.note-card p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.note-footer {
+  margin-top: auto;
+  padding-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.note-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.note-actions button {
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.note-actions button:hover { color: white; }
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 70px 15px;
+  color: var(--muted);
+}
+
+.empty div { font-size: 35px; margin-bottom: 15px; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000b;
+  z-index: 5;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.modal.show { display: flex; }
+
+.editor {
+  width: 100%;
+  max-width: 620px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 25px;
+}
+
+.editor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.editor-top h2 { font-size: 18px; }
+
+.close-btn {
+  background: transparent;
+  color: var(--muted);
+  font-size: 24px;
+}
+
+.editor-input {
+  width: 100%;
+  background: #0b0d12;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 14px;
+  margin-bottom: 13px;
+  color: white;
+  font-family: inherit;
+  outline: none;
+}
+
+textarea.editor-input {
+  min-height: 230px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.editor-bottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #242936;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 9px;
+}
+
+.save-btn {
+  background: var(--accent);
+  color: white;
+  padding: 11px 20px;
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+@media(max-width:650px) {
+  .sidebar { width: 68px; padding: 20px 8px; }
+  .logo { font-size: 16px; margin: 0 0 35px; text-align: center; }
+  .logo span { display: none; }
+  .nav-label, .nav-item .nav-text, .sidebar-bottom { display: none; }
+  .nav-item { text-align: center; padding: 13px 5px; font-size: 18px; }
+  .main { padding: 25px 15px; }
+  .topbar { flex-direction: column; align-items: stretch; }
+  .top-actions { flex-wrap: wrap; }
+  .search { flex: 1; min-width: 100px; }
+  .greeting h1 { font-size: 24px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">Note<span>Flow.</span></div>
+
+    <div class="nav-label">WORKSPACE</div>
+
+    <div class="nav-item active" onclick="setFilter('all',this)">
+      📝 <span class="nav-text"> All Notes</span>
+    </div>
+
+    <div class="nav-item" onclick="setFilter('favorites',this)">
+      ⭐ <span class="nav-text"> Favorites</span>
+    </div>
+
+    <div class="nav-item" onclick="setFilter('trash',this)">
+      🗑️ <span class="nav-text"> Trash</span>
+    </div>
+
+    <div class="sidebar-bottom">
+      Your thoughts, organized.<br><br>
+      NOTEFlow © 2026
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="greeting">
+        <h1 id="heading">Your Notes ✨</h1>
+        <p>Capture your thoughts. Keep your ideas flowing.</p>
+      </div>
+
+      <div class="top-actions">
+        <input class="search" id="search" placeholder="🔍 Search notes..." oninput="renderNotes()">
+        <button class="new-btn" onclick="openEditor()">+ New Note</button>
+      </div>
+    </header>
+
+    <div class="section-heading">
+      <h2 id="section-title">All Notes</h2>
+      <span id="note-count">0 notes</span>
+    </div>
+
+    <div class="notes-grid" id="notes-grid"></div>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="editor">
+    <div class="editor-top">
+      <h2 id="editor-heading">Create a Note</h2>
+      <button class="close-btn" onclick="closeEditor()">×</button>
+    </div>
+
+    <input id="note-title" class="editor-input" placeholder="Give your note a title...">
+    <textarea id="note-content" class="editor-input" placeholder="Start writing your thoughts..."></textarea>
+
+    <div class="editor-bottom">
+      <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+      <button class="save-btn" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let notes = JSON.parse(localStorage.getItem('noteflow_notes') || '[]');
+let filter = 'all';
+let editingId = null;
+
+function persist() {
+  localStorage.setItem('noteflow_notes', JSON.stringify(notes));
+}
+
+function setFilter(value, element) {
+  filter = value;
+
+  document.querySelectorAll('.nav-item').forEach(item =>
+    item.classList.remove('active')
+  );
+
+  element.classList.add('active');
+
+  const labels = {
+    all: 'All Notes',
+    favorites: 'Favorites',
+    trash: 'Trash'
+  };
+
+  document.getElementById('heading').textContent =
+    value === 'all' ? 'Your Notes ✨' : labels[value];
+
+  document.getElementById('section-title').textContent = labels[value];
+
+  renderNotes();
+}
+
+function openEditor(id = null) {
+  editingId = id;
+
+  const note = notes.find(n => n.id === id);
+
+  document.getElementById('editor-heading').textContent =
+    note ? 'Edit Note' : 'Create a Note';
+
+  document.getElementById('note-title').value = note?.title || '';
+  document.getElementById('note-content').value = note?.content || '';
+
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('note-title').focus();
+}
+
+function closeEditor() {
+  document.getElementById('modal').classList.remove('show');
+  editingId = null;
+}
+
+function saveNote() {
+  const title = document.getElementById('note-title').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+
+  if (!title && !content) {
+    alert('Please write something first!');
+    return;
+  }
+
+  if (editingId !== null) {
+    const note = notes.find(n => n.id === editingId);
+    note.title = title || 'Untitled Note';
+    note.content = content;
+    note.updated = new Date().toLocaleDateString();
+  } else {
+    notes.unshift({
+      id: Date.now(),
+      title: title || 'Untitled Note',
+      content,
+      favorite: false,
+      trash: false,
+      updated: new Date().toLocaleDateString()
+    });
+  }
+
+  persist();
+  closeEditor();
+  renderNotes();
+}
+
+function toggleFavorite(id) {
+  const note = notes.find(n => n.id === id);
+  note.favorite = !note.favorite;
+  persist();
+  renderNotes();
+}
+
+function deleteNote(id) {
+  const note = notes.find(n => n.id === id);
+
+  if (filter === 'trash') {
+    if (!confirm('Permanently delete this note?')) return;
+    notes = notes.filter(n => n.id !== id);
+  } else {
+    note.trash = true;
+  }
+
+  persist();
+  renderNotes();
+}
+
+function restoreNote(id) {
+  const note = notes.find(n => n.id === id);
+  note.trash = false;
+  persist();
+  renderNotes();
+}
+
+function renderNotes() {
+  const grid = document.getElementById('notes-grid');
+  const query = document.getElementById('search').value.toLowerCase();
+
+  let visible = notes.filter(note => {
+    if (filter === 'all' && note.trash) return false;
+    if (filter === 'favorites' && (!note.favorite || note.trash)) return false;
+    if (filter === 'trash' && !note.trash) return false;
+
+    return note.title.toLowerCase().includes(query) ||
+           note.content.toLowerCase().includes(query);
+  });
+
+  document.getElementById('note-count').textContent =
+    visible.length + (visible.length === 1 ? ' note' : ' notes');
+
+  if (!visible.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div>📝</div>
+        <strong>Nothing here yet</strong>
+        <p>Your notes will appear here.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = visible.map(note => `
+    <article class="note-card" onclick="openEditor(${note.id})">
+      <h3>${escapeHTML(note.title)}</h3>
+      <p>${escapeHTML(note.content)}</p>
+
+      <div class="note-footer">
+        <span>${escapeHTML(note.updated || '')}</span>
+        <div class="note-actions">
+          ${filter !== 'trash' ? `
+            <button title="Favorite" onclick="event.stopPropagation();toggleFavorite(${note.id})">
+              ${note.favorite ? '★' : '☆'}
+            </button>` : ''}
+
+          ${filter === 'trash' ? `
+            <button title="Restore" onclick="event.stopPropagation();restoreNote(${note.id})">↩</button>
+          ` : ''}
+
+          <button title="${filter === 'trash' ? 'Delete permanently' : 'Move to trash'}"
+            onclick="event.stopPropagation();deleteNote(${note.id})">×</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeEditor();
+});
+
+renderNotes();
+</script>
+</body>
+</html>
