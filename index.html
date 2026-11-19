@@ -725,7 +725,17 @@ function saveNote() {
   closeEditor();
   renderNotes();
 }
+function togglePin(id) {
+  const note = notes.find(n => n.id === id);
 
+  if (!note || note.trash) return;
+
+  note.pinned = !note.pinned;
+
+  if (!persist()) return;
+
+  renderNotes();
+}
 function toggleFavorite(id) {
 
   const note = notes.find(n => n.id === id);
