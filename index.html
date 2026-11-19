@@ -21,9 +21,7 @@
   --accent-light: #73b3ff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -32,13 +30,8 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
-button, input, textarea {
-  font-family: inherit;
-}
-
-button {
-  cursor: pointer;
-}
+button, input, textarea { font-family: inherit; }
+button { cursor: pointer; }
 
 .app {
   display: flex;
@@ -64,9 +57,7 @@ button {
   margin: 0 0 48px 9px;
 }
 
-.logo span {
-  color: var(--accent);
-}
+.logo span { color: var(--accent); }
 
 .nav-label {
   font-size: 10px;
@@ -96,9 +87,7 @@ button {
   color: var(--accent-light);
 }
 
-.nav-icon {
-  font-size: 17px;
-}
+.nav-icon { font-size: 17px; }
 
 .nav-count {
   margin-left: auto;
@@ -226,17 +215,12 @@ button {
   border-color: var(--accent);
   box-shadow: 0 12px 30px #0004;
 }
+
 .note-card.pinned {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px #398cff30;
 }
 
-.pin-label {
-  color: var(--accent-light);
-  font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
 .note-card h3 {
   font-size: 16px;
   margin: 0 0 13px;
@@ -304,9 +288,7 @@ button {
   font-size: 17px;
 }
 
-.empty p {
-  font-size: 13px;
-}
+.empty p { font-size: 13px; }
 
 /* EDITOR MODAL */
 
@@ -357,9 +339,7 @@ button {
   border: none;
 }
 
-.close-btn:hover {
-  color: white;
-}
+.close-btn:hover { color: white; }
 
 .editor-input {
   width: 100%;
@@ -403,9 +383,7 @@ textarea.editor-input {
   color: white;
 }
 
-.save-btn:hover {
-  background: #2474dc;
-}
+.save-btn:hover { background: #2474dc; }
 
 /* ANIMATIONS */
 
@@ -453,9 +431,7 @@ textarea.editor-input {
     font-size: 19px;
   }
 
-  .main {
-    padding: 27px 17px;
-  }
+  .main { padding: 27px 17px; }
 
   .topbar {
     flex-direction: column;
@@ -463,40 +439,28 @@ textarea.editor-input {
     margin-bottom: 30px;
   }
 
-  .top-actions {
-    flex-wrap: wrap;
-  }
+  .top-actions { flex-wrap: wrap; }
 
   .search {
     flex: 1;
     min-width: 100px;
   }
 
-  .greeting h1 {
-    font-size: 25px;
-  }
+  .greeting h1 { font-size: 25px; }
 }
 
 @media(max-width: 420px) {
-  .new-btn {
-    padding: 12px;
-  }
-
-  .notes-grid {
-    grid-template-columns: 1fr;
-  }
+  .new-btn { padding: 12px; }
+  .notes-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
   <aside class="sidebar">
-
     <div class="logo">Note<span>Flow.</span></div>
-
     <div class="nav-label">WORKSPACE</div>
 
     <div class="nav-item active" onclick="setFilter('all',this)">
@@ -522,13 +486,10 @@ textarea.editor-input {
       Your thoughts, organized.<br><br>
       © 2026 NoteFlow
     </div>
-
   </aside>
 
   <main class="main">
-
     <header class="topbar">
-
       <div class="greeting">
         <h1 id="heading">Your Notes ✨</h1>
         <p>Capture your thoughts. Keep your ideas flowing.</p>
@@ -541,12 +502,8 @@ textarea.editor-input {
           placeholder="⌕  Search your notes..."
           oninput="renderNotes()"
         >
-
-        <button class="new-btn" onclick="openEditor()">
-          + New Note
-        </button>
+        <button class="new-btn" onclick="openEditor()">+ New Note</button>
       </div>
-
     </header>
 
     <div class="section-heading">
@@ -555,17 +512,13 @@ textarea.editor-input {
     </div>
 
     <div class="notes-grid" id="notes-grid"></div>
-
   </main>
-
 </div>
 
 <!-- NOTE EDITOR -->
 
 <div class="modal" id="modal">
-
   <div class="editor">
-
     <div class="editor-top">
       <h2 id="editor-heading">Create a Note</h2>
       <button class="close-btn" onclick="closeEditor()">×</button>
@@ -588,20 +541,16 @@ textarea.editor-input {
       <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
       <button class="save-btn" onclick="saveNote()">Save Note</button>
     </div>
-
   </div>
-
 </div>
 
 <script>
-
 let notes = [];
 
 try {
   const stored = JSON.parse(
     localStorage.getItem('noteflow_notes') || '[]'
   );
-
   notes = Array.isArray(stored) ? stored : [];
 } catch {
   notes = [];
@@ -612,10 +561,7 @@ let editingId = null;
 
 function persist() {
   try {
-    localStorage.setItem(
-      'noteflow_notes',
-      JSON.stringify(notes)
-    );
+    localStorage.setItem('noteflow_notes', JSON.stringify(notes));
     return true;
   } catch {
     alert('Could not save your notes. Check your browser storage.');
@@ -635,7 +581,6 @@ function updateCounts() {
 }
 
 function setFilter(value, element) {
-
   filter = value;
 
   document.querySelectorAll('.nav-item').forEach(item => {
@@ -653,14 +598,12 @@ function setFilter(value, element) {
   document.getElementById('heading').textContent =
     value === 'all' ? 'Your Notes ✨' : labels[value];
 
-  document.getElementById('section-title').textContent =
-    labels[value];
+  document.getElementById('section-title').textContent = labels[value];
 
   renderNotes();
 }
 
 function openEditor(id = null) {
-
   editingId = id;
 
   const note = notes.find(n => n.id === id);
@@ -668,28 +611,20 @@ function openEditor(id = null) {
   document.getElementById('editor-heading').textContent =
     note ? 'Edit Note' : 'Create a Note';
 
-  document.getElementById('note-title').value =
-    note?.title || '';
-
-  document.getElementById('note-content').value =
-    note?.content || '';
+  document.getElementById('note-title').value = note?.title || '';
+  document.getElementById('note-content').value = note?.content || '';
 
   document.getElementById('modal').classList.add('show');
-
   document.getElementById('note-title').focus();
 }
 
 function closeEditor() {
-
   document.getElementById('modal').classList.remove('show');
-
   editingId = null;
 }
 
 function saveNote() {
-
   const title = document.getElementById('note-title').value.trim();
-
   const content = document.getElementById('note-content').value.trim();
 
   if (!title && !content) {
@@ -698,26 +633,22 @@ function saveNote() {
   }
 
   if (editingId !== null) {
-
     const note = notes.find(n => n.id === editingId);
-
     if (!note) return;
 
     note.title = title || 'Untitled Note';
     note.content = content;
     note.updated = new Date().toLocaleDateString();
-
   } else {
-
     notes.unshift({
       id: Date.now(),
       title: title || 'Untitled Note',
       content: content,
       favorite: false,
+      pinned: false,
       trash: false,
       updated: new Date().toLocaleDateString()
     });
-
   }
 
   if (!persist()) return;
@@ -725,6 +656,7 @@ function saveNote() {
   closeEditor();
   renderNotes();
 }
+
 function togglePin(id) {
   const note = notes.find(n => n.id === id);
 
@@ -736,61 +668,51 @@ function togglePin(id) {
 
   renderNotes();
 }
-function toggleFavorite(id) {
 
+function toggleFavorite(id) {
   const note = notes.find(n => n.id === id);
 
-  if (!note) return;
+  if (!note || note.trash) return;
 
   note.favorite = !note.favorite;
 
-  persist();
+  if (!persist()) return;
+
   renderNotes();
 }
 
 function deleteNote(id) {
-
   const note = notes.find(n => n.id === id);
-
   if (!note) return;
 
   if (filter === 'trash') {
-
     if (!confirm('Permanently delete this note?')) return;
-
     notes = notes.filter(n => n.id !== id);
-
   } else {
-
     note.trash = true;
-
   }
 
-  persist();
+  if (!persist()) return;
   renderNotes();
 }
 
 function restoreNote(id) {
-
   const note = notes.find(n => n.id === id);
-
   if (!note) return;
 
   note.trash = false;
 
-  persist();
+  if (!persist()) return;
   renderNotes();
 }
 
 function renderNotes() {
-
   const grid = document.getElementById('notes-grid');
 
   const query = document.getElementById('search')
     .value.toLowerCase().trim();
 
   let visible = notes.filter(note => {
-
     if (filter === 'all' && note.trash) return false;
 
     if (filter === 'favorites' &&
@@ -800,17 +722,21 @@ function renderNotes() {
 
     return String(note.title || '').toLowerCase().includes(query) ||
            String(note.content || '').toLowerCase().includes(query);
-
   });
- 
-    visible.sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
+
+  // Pinned notes appear before unpinned notes.
+  if (filter !== 'trash') {
+    visible.sort((a, b) =>
+      Number(!!b.pinned) - Number(!!a.pinned)
+    );
+  }
+
   updateCounts();
 
   document.getElementById('note-count').textContent =
     visible.length + (visible.length === 1 ? ' note' : ' notes');
 
   if (!visible.length) {
-
     const messages = {
       all: ['📝', 'No notes yet', 'Create your first note and start organizing your thoughts.'],
       favorites: ['⭐', 'No favorites yet', 'Star your important notes to find them here.'],
@@ -826,35 +752,32 @@ function renderNotes() {
         <p>${description}</p>
       </div>
     `;
-
     return;
   }
 
   grid.innerHTML = visible.map(note => `
-
     <article
-      class="note-card ${note.pinned ? 'pinned' : ''}"
+      class="note-card ${note.pinned && filter !== 'trash' ? 'pinned' : ''}"
       onclick="openEditor(${Number(note.id)})"
     >
-
       <h3>${escapeHTML(note.title || 'Untitled Note')}</h3>
 
       <p>${escapeHTML(note.content || 'No additional content...')}</p>
 
       <div class="note-footer">
-
         <span>${escapeHTML(note.updated || '')}</span>
-${filter !== 'trash' ? `
-  <button
-    title="${note.pinned ? 'Unpin note' : 'Pin note'}"
-    onclick="event.stopPropagation();togglePin(${Number(note.id)})"
-  >${note.pinned ? '📌' : '📍'}</button>
-` : ''}
-        <div class="note-actions">
 
+        <div class="note-actions">
           ${filter !== 'trash' ? `
             <button
+              title="${note.pinned ? 'Unpin note' : 'Pin note'}"
+              aria-label="${note.pinned ? 'Unpin note' : 'Pin note'}"
+              onclick="event.stopPropagation();togglePin(${Number(note.id)})"
+            >${note.pinned ? '📌' : '📍'}</button>
+
+            <button
               title="Favorite"
+              aria-label="Toggle favorite"
               onclick="event.stopPropagation();toggleFavorite(${Number(note.id)})"
             >${note.favorite ? '★' : '☆'}</button>
           ` : ''}
@@ -862,66 +785,47 @@ ${filter !== 'trash' ? `
           ${filter === 'trash' ? `
             <button
               title="Restore"
+              aria-label="Restore note"
               onclick="event.stopPropagation();restoreNote(${Number(note.id)})"
             >↩</button>
           ` : ''}
 
           <button
             title="${filter === 'trash' ? 'Delete permanently' : 'Move to trash'}"
+            aria-label="${filter === 'trash' ? 'Delete permanently' : 'Move to trash'}"
             onclick="event.stopPropagation();deleteNote(${Number(note.id)})"
           >×</button>
-
         </div>
-
       </div>
-
     </article>
-
   `).join('');
-
 }
 
 function escapeHTML(value) {
-
   return String(value).replace(/[&<>"']/g, char => ({
-
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;'
-
   })[char]);
-
 }
 
 document.getElementById('modal').addEventListener('click', e => {
-
-  if (e.target.id === 'modal') {
-    closeEditor();
-  }
-
+  if (e.target.id === 'modal') closeEditor();
 });
 
 document.addEventListener('keydown', e => {
-
-  if (e.key === 'Escape') {
-    closeEditor();
-  }
+  if (e.key === 'Escape') closeEditor();
 
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-
     if (document.getElementById('modal').classList.contains('show')) {
       saveNote();
     }
-
   }
-
 });
 
 renderNotes();
-
 </script>
-
 </body>
 </html>
