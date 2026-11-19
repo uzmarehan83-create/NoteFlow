@@ -843,7 +843,12 @@ function renderNotes() {
       <div class="note-footer">
 
         <span>${escapeHTML(note.updated || '')}</span>
-
+${filter !== 'trash' ? `
+  <button
+    title="${note.pinned ? 'Unpin note' : 'Pin note'}"
+    onclick="event.stopPropagation();togglePin(${Number(note.id)})"
+  >${note.pinned ? '📌' : '📍'}</button>
+` : ''}
         <div class="note-actions">
 
           ${filter !== 'trash' ? `
