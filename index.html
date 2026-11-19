@@ -812,7 +812,7 @@ function renderNotes() {
   grid.innerHTML = visible.map(note => `
 
     <article
-      class="note-card"
+      class="note-card ${note.pinned ? 'pinned' : ''}"
       onclick="openEditor(${Number(note.id)})"
     >
 
