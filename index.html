@@ -4,22 +4,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NoteFlow — Your Space</title>
+<title>NoteFlow 2.0 — Your Space</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #0b0d12;
-  --panel: #12151d;
-  --card: #171b25;
-  --border: #262b38;
-  --text: #f1f3fa;
-  --muted: #9299aa;
-  --accent: #9875ff;
+  --bg: #080f1d;
+  --panel: #0e192b;
+  --card: #132139;
+  --card-hover: #192b47;
+  --border: #203450;
+  --text: #edf4ff;
+  --muted: #91a4bd;
+  --accent: #398cff;
+  --accent-light: #73b3ff;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -28,13 +32,23 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
+button, input, textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
 .app {
   display: flex;
   min-height: 100vh;
 }
 
+/* SIDEBAR */
+
 .sidebar {
-  width: 245px;
+  width: 255px;
   background: var(--panel);
   border-right: 1px solid var(--border);
   padding: 28px 18px;
@@ -44,154 +58,184 @@ body {
 }
 
 .logo {
-  font-size: 25px;
+  font-size: 27px;
   font-weight: 800;
-  margin: 0 0 45px 8px;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
+  margin: 0 0 48px 9px;
 }
 
-.logo span { color: var(--accent); }
+.logo span {
+  color: var(--accent);
+}
 
 .nav-label {
+  font-size: 10px;
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  margin: 0 0 12px 10px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  margin: 0 0 13px 12px;
 }
 
 .nav-item {
-  padding: 12px;
-  border-radius: 9px;
-  margin-bottom: 5px;
+  padding: 13px;
+  border-radius: 10px;
+  margin-bottom: 7px;
   color: var(--muted);
   cursor: pointer;
   font-size: 14px;
-  transition: .2s;
+  font-weight: 600;
+  transition: .25s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.nav-item:hover, .nav-item.active {
-  background: #262039;
-  color: #c9baff;
+.nav-item:hover,
+.nav-item.active {
+  background: #1b3456;
+  color: var(--accent-light);
+}
+
+.nav-icon {
+  font-size: 17px;
+}
+
+.nav-count {
+  margin-left: auto;
+  font-size: 11px;
+  opacity: .75;
 }
 
 .sidebar-bottom {
   margin-top: auto;
+  padding: 16px 10px;
+  border-top: 1px solid var(--border);
   color: var(--muted);
   font-size: 12px;
-  padding: 12px;
+  line-height: 1.8;
 }
+
+/* MAIN */
 
 .main {
   flex: 1;
-  padding: 38px 5%;
   min-width: 0;
+  padding: 42px 5%;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 45px;
+  gap: 20px;
+  margin-bottom: 43px;
 }
 
 .greeting h1 {
-  font-size: 29px;
+  font-size: 31px;
   margin: 0;
-  letter-spacing: -1px;
+  letter-spacing: -1.2px;
 }
 
 .greeting p {
   color: var(--muted);
   font-size: 13px;
-  margin-top: 7px;
+  margin-top: 9px;
 }
 
 .top-actions {
   display: flex;
-  gap: 10px;
+  gap: 11px;
 }
 
 .search {
   background: var(--panel);
   border: 1px solid var(--border);
-  padding: 12px 15px;
-  border-radius: 10px;
+  padding: 13px 16px;
+  border-radius: 11px;
   color: white;
   outline: none;
-  width: 210px;
+  width: 235px;
+  transition: .2s;
 }
 
-.search:focus, .editor-input:focus {
+.search:focus,
+.editor-input:focus {
   border-color: var(--accent);
-}
-
-button {
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
+  box-shadow: 0 0 0 3px #398cff20;
 }
 
 .new-btn {
   background: var(--accent);
   color: white;
-  padding: 12px 19px;
-  border-radius: 10px;
+  padding: 13px 20px;
+  border-radius: 11px;
   font-weight: 700;
+  border: none;
   transition: .2s;
+  white-space: nowrap;
 }
 
-.new-btn:hover { background: #8059ed; }
+.new-btn:hover {
+  background: #2474dc;
+  transform: translateY(-2px);
+}
+
+/* NOTES */
 
 .section-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .section-heading h2 {
-  font-size: 17px;
+  font-size: 18px;
   margin: 0;
 }
 
 .section-heading span {
-  font-size: 12px;
   color: var(--muted);
+  font-size: 12px;
 }
 
 .notes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  gap: 17px;
+  gap: 18px;
 }
 
 .note-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  min-height: 185px;
+  border-radius: 15px;
+  padding: 21px;
+  min-height: 195px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: .2s;
+  transition: .25s;
+  animation: appear .35s ease both;
+  overflow-wrap: anywhere;
 }
 
 .note-card:hover {
-  transform: translateY(-3px);
-  border-color: #62508e;
+  transform: translateY(-5px);
+  background: var(--card-hover);
+  border-color: var(--accent);
+  box-shadow: 0 12px 30px #0004;
 }
 
 .note-card h3 {
   font-size: 16px;
-  margin: 0 0 12px;
+  margin: 0 0 13px;
+  font-weight: 700;
 }
 
 .note-card p {
   font-size: 13px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: var(--muted);
   margin: 0;
   white-space: pre-wrap;
@@ -203,12 +247,13 @@ button {
 
 .note-footer {
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: var(--muted);
   font-size: 11px;
+  gap: 10px;
 }
 
 .note-actions {
@@ -217,42 +262,70 @@ button {
 }
 
 .note-actions button {
-  background: transparent;
+  background: #203450;
   color: var(--muted);
-  font-size: 16px;
+  border: none;
+  border-radius: 7px;
+  width: 29px;
+  height: 29px;
+  font-size: 15px;
+  transition: .2s;
 }
 
-.note-actions button:hover { color: white; }
+.note-actions button:hover {
+  color: white;
+  background: var(--accent);
+}
 
 .empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 70px 15px;
+  padding: 80px 15px;
   color: var(--muted);
 }
 
-.empty div { font-size: 35px; margin-bottom: 15px; }
+.empty div {
+  font-size: 42px;
+  margin-bottom: 17px;
+}
+
+.empty strong {
+  color: var(--text);
+  font-size: 17px;
+}
+
+.empty p {
+  font-size: 13px;
+}
+
+/* EDITOR MODAL */
 
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: #000b;
+  background: #020814dd;
+  backdrop-filter: blur(7px);
   z-index: 5;
   justify-content: center;
   align-items: center;
   padding: 15px;
 }
 
-.modal.show { display: flex; }
+.modal.show {
+  display: flex;
+  animation: fade .2s ease;
+}
 
 .editor {
   width: 100%;
-  max-width: 620px;
+  max-width: 650px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 17px;
-  padding: 25px;
+  border-radius: 19px;
+  padding: 27px;
+  box-shadow: 0 25px 80px #0008;
+  animation: appear .25s ease;
 }
 
 .editor-top {
@@ -262,105 +335,208 @@ button {
   margin-bottom: 25px;
 }
 
-.editor-top h2 { font-size: 18px; }
+.editor-top h2 {
+  font-size: 20px;
+  margin: 0;
+}
 
 .close-btn {
   background: transparent;
   color: var(--muted);
-  font-size: 24px;
+  font-size: 27px;
+  border: none;
+}
+
+.close-btn:hover {
+  color: white;
 }
 
 .editor-input {
   width: 100%;
-  background: #0b0d12;
+  background: #091426;
   border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 14px;
-  margin-bottom: 13px;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 14px;
   color: white;
-  font-family: inherit;
   outline: none;
+  font-size: 14px;
 }
 
 textarea.editor-input {
-  min-height: 230px;
+  min-height: 240px;
   resize: vertical;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .editor-bottom {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 11px;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 12px 20px;
+  border-radius: 9px;
+  border: none;
+  font-weight: 700;
 }
 
 .cancel-btn {
-  background: #242936;
+  background: #203047;
   color: white;
-  padding: 11px 18px;
-  border-radius: 9px;
 }
 
 .save-btn {
   background: var(--accent);
   color: white;
-  padding: 11px 20px;
-  border-radius: 9px;
-  font-weight: 700;
 }
 
-@media(max-width:650px) {
-  .sidebar { width: 68px; padding: 20px 8px; }
-  .logo { font-size: 16px; margin: 0 0 35px; text-align: center; }
-  .logo span { display: none; }
-  .nav-label, .nav-item .nav-text, .sidebar-bottom { display: none; }
-  .nav-item { text-align: center; padding: 13px 5px; font-size: 18px; }
-  .main { padding: 25px 15px; }
-  .topbar { flex-direction: column; align-items: stretch; }
-  .top-actions { flex-wrap: wrap; }
-  .search { flex: 1; min-width: 100px; }
-  .greeting h1 { font-size: 24px; }
+.save-btn:hover {
+  background: #2474dc;
+}
+
+/* ANIMATIONS */
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* MOBILE */
+
+@media(max-width: 750px) {
+  .sidebar {
+    width: 75px;
+    padding: 20px 8px;
+  }
+
+  .logo {
+    font-size: 16px;
+    margin: 0 0 38px;
+    text-align: center;
+  }
+
+  .logo span,
+  .nav-label,
+  .nav-text,
+  .nav-count,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 14px 5px;
+    font-size: 19px;
+  }
+
+  .main {
+    padding: 27px 17px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 30px;
+  }
+
+  .top-actions {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .greeting h1 {
+    font-size: 25px;
+  }
+}
+
+@media(max-width: 420px) {
+  .new-btn {
+    padding: 12px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
   <aside class="sidebar">
+
     <div class="logo">Note<span>Flow.</span></div>
 
     <div class="nav-label">WORKSPACE</div>
 
     <div class="nav-item active" onclick="setFilter('all',this)">
-      📝 <span class="nav-text"> All Notes</span>
+      <span class="nav-icon">▤</span>
+      <span class="nav-text">All Notes</span>
+      <span class="nav-count" id="all-count">0</span>
     </div>
 
     <div class="nav-item" onclick="setFilter('favorites',this)">
-      ⭐ <span class="nav-text"> Favorites</span>
+      <span class="nav-icon">☆</span>
+      <span class="nav-text">Favorites</span>
+      <span class="nav-count" id="favorite-count">0</span>
     </div>
 
     <div class="nav-item" onclick="setFilter('trash',this)">
-      🗑️ <span class="nav-text"> Trash</span>
+      <span class="nav-icon">▱</span>
+      <span class="nav-text">Trash</span>
+      <span class="nav-count" id="trash-count">0</span>
     </div>
 
     <div class="sidebar-bottom">
+      <strong style="color:#73b3ff">NoteFlow 2.0</strong><br>
       Your thoughts, organized.<br><br>
-      NOTEFlow © 2026
+      © 2026 NoteFlow
     </div>
+
   </aside>
 
   <main class="main">
+
     <header class="topbar">
+
       <div class="greeting">
         <h1 id="heading">Your Notes ✨</h1>
         <p>Capture your thoughts. Keep your ideas flowing.</p>
       </div>
 
       <div class="top-actions">
-        <input class="search" id="search" placeholder="🔍 Search notes..." oninput="renderNotes()">
-        <button class="new-btn" onclick="openEditor()">+ New Note</button>
+        <input
+          class="search"
+          id="search"
+          placeholder="⌕  Search your notes..."
+          oninput="renderNotes()"
+        >
+
+        <button class="new-btn" onclick="openEditor()">
+          + New Note
+        </button>
       </div>
+
     </header>
 
     <div class="section-heading">
@@ -369,41 +545,92 @@ textarea.editor-input {
     </div>
 
     <div class="notes-grid" id="notes-grid"></div>
+
   </main>
+
 </div>
 
+<!-- NOTE EDITOR -->
+
 <div class="modal" id="modal">
+
   <div class="editor">
+
     <div class="editor-top">
       <h2 id="editor-heading">Create a Note</h2>
       <button class="close-btn" onclick="closeEditor()">×</button>
     </div>
 
-    <input id="note-title" class="editor-input" placeholder="Give your note a title...">
-    <textarea id="note-content" class="editor-input" placeholder="Start writing your thoughts..."></textarea>
+    <input
+      id="note-title"
+      class="editor-input"
+      placeholder="Give your note a title..."
+      maxlength="150"
+    >
+
+    <textarea
+      id="note-content"
+      class="editor-input"
+      placeholder="Start writing your thoughts..."
+    ></textarea>
 
     <div class="editor-bottom">
       <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
       <button class="save-btn" onclick="saveNote()">Save Note</button>
     </div>
+
   </div>
+
 </div>
 
 <script>
-let notes = JSON.parse(localStorage.getItem('noteflow_notes') || '[]');
+
+let notes = [];
+
+try {
+  const stored = JSON.parse(
+    localStorage.getItem('noteflow_notes') || '[]'
+  );
+
+  notes = Array.isArray(stored) ? stored : [];
+} catch {
+  notes = [];
+}
+
 let filter = 'all';
 let editingId = null;
 
 function persist() {
-  localStorage.setItem('noteflow_notes', JSON.stringify(notes));
+  try {
+    localStorage.setItem(
+      'noteflow_notes',
+      JSON.stringify(notes)
+    );
+    return true;
+  } catch {
+    alert('Could not save your notes. Check your browser storage.');
+    return false;
+  }
+}
+
+function updateCounts() {
+  document.getElementById('all-count').textContent =
+    notes.filter(n => !n.trash).length;
+
+  document.getElementById('favorite-count').textContent =
+    notes.filter(n => n.favorite && !n.trash).length;
+
+  document.getElementById('trash-count').textContent =
+    notes.filter(n => n.trash).length;
 }
 
 function setFilter(value, element) {
+
   filter = value;
 
-  document.querySelectorAll('.nav-item').forEach(item =>
-    item.classList.remove('active')
-  );
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
 
   element.classList.add('active');
 
@@ -416,12 +643,14 @@ function setFilter(value, element) {
   document.getElementById('heading').textContent =
     value === 'all' ? 'Your Notes ✨' : labels[value];
 
-  document.getElementById('section-title').textContent = labels[value];
+  document.getElementById('section-title').textContent =
+    labels[value];
 
   renderNotes();
 }
 
 function openEditor(id = null) {
+
   editingId = id;
 
   const note = notes.find(n => n.id === id);
@@ -429,20 +658,28 @@ function openEditor(id = null) {
   document.getElementById('editor-heading').textContent =
     note ? 'Edit Note' : 'Create a Note';
 
-  document.getElementById('note-title').value = note?.title || '';
-  document.getElementById('note-content').value = note?.content || '';
+  document.getElementById('note-title').value =
+    note?.title || '';
+
+  document.getElementById('note-content').value =
+    note?.content || '';
 
   document.getElementById('modal').classList.add('show');
+
   document.getElementById('note-title').focus();
 }
 
 function closeEditor() {
+
   document.getElementById('modal').classList.remove('show');
+
   editingId = null;
 }
 
 function saveNote() {
+
   const title = document.getElementById('note-title').value.trim();
+
   const content = document.getElementById('note-content').value.trim();
 
   if (!title && !content) {
@@ -451,41 +688,62 @@ function saveNote() {
   }
 
   if (editingId !== null) {
+
     const note = notes.find(n => n.id === editingId);
+
+    if (!note) return;
+
     note.title = title || 'Untitled Note';
     note.content = content;
     note.updated = new Date().toLocaleDateString();
+
   } else {
+
     notes.unshift({
       id: Date.now(),
       title: title || 'Untitled Note',
-      content,
+      content: content,
       favorite: false,
       trash: false,
       updated: new Date().toLocaleDateString()
     });
+
   }
 
-  persist();
+  if (!persist()) return;
+
   closeEditor();
   renderNotes();
 }
 
 function toggleFavorite(id) {
+
   const note = notes.find(n => n.id === id);
+
+  if (!note) return;
+
   note.favorite = !note.favorite;
+
   persist();
   renderNotes();
 }
 
 function deleteNote(id) {
+
   const note = notes.find(n => n.id === id);
 
+  if (!note) return;
+
   if (filter === 'trash') {
+
     if (!confirm('Permanently delete this note?')) return;
+
     notes = notes.filter(n => n.id !== id);
+
   } else {
+
     note.trash = true;
+
   }
 
   persist();
@@ -493,78 +751,151 @@ function deleteNote(id) {
 }
 
 function restoreNote(id) {
+
   const note = notes.find(n => n.id === id);
+
+  if (!note) return;
+
   note.trash = false;
+
   persist();
   renderNotes();
 }
 
 function renderNotes() {
+
   const grid = document.getElementById('notes-grid');
-  const query = document.getElementById('search').value.toLowerCase();
+
+  const query = document.getElementById('search')
+    .value.toLowerCase().trim();
 
   let visible = notes.filter(note => {
+
     if (filter === 'all' && note.trash) return false;
-    if (filter === 'favorites' && (!note.favorite || note.trash)) return false;
+
+    if (filter === 'favorites' &&
+        (!note.favorite || note.trash)) return false;
+
     if (filter === 'trash' && !note.trash) return false;
 
-    return note.title.toLowerCase().includes(query) ||
-           note.content.toLowerCase().includes(query);
+    return String(note.title || '').toLowerCase().includes(query) ||
+           String(note.content || '').toLowerCase().includes(query);
+
   });
+
+  updateCounts();
 
   document.getElementById('note-count').textContent =
     visible.length + (visible.length === 1 ? ' note' : ' notes');
 
   if (!visible.length) {
+
+    const messages = {
+      all: ['📝', 'No notes yet', 'Create your first note and start organizing your thoughts.'],
+      favorites: ['⭐', 'No favorites yet', 'Star your important notes to find them here.'],
+      trash: ['🗑️', 'Your trash is empty', 'Deleted notes will appear here.']
+    };
+
+    const [icon, title, description] = messages[filter];
+
     grid.innerHTML = `
       <div class="empty">
-        <div>📝</div>
-        <strong>Nothing here yet</strong>
-        <p>Your notes will appear here.</p>
-      </div>`;
+        <div>${icon}</div>
+        <strong>${title}</strong>
+        <p>${description}</p>
+      </div>
+    `;
+
     return;
   }
 
   grid.innerHTML = visible.map(note => `
-    <article class="note-card" onclick="openEditor(${note.id})">
-      <h3>${escapeHTML(note.title)}</h3>
-      <p>${escapeHTML(note.content)}</p>
+
+    <article
+      class="note-card"
+      onclick="openEditor(${Number(note.id)})"
+    >
+
+      <h3>${escapeHTML(note.title || 'Untitled Note')}</h3>
+
+      <p>${escapeHTML(note.content || 'No additional content...')}</p>
 
       <div class="note-footer">
-        <span>${escapeHTML(note.updated || '')}</span>
-        <div class="note-actions">
-          ${filter !== 'trash' ? `
-            <button title="Favorite" onclick="event.stopPropagation();toggleFavorite(${note.id})">
-              ${note.favorite ? '★' : '☆'}
-            </button>` : ''}
 
-          ${filter === 'trash' ? `
-            <button title="Restore" onclick="event.stopPropagation();restoreNote(${note.id})">↩</button>
+        <span>${escapeHTML(note.updated || '')}</span>
+
+        <div class="note-actions">
+
+          ${filter !== 'trash' ? `
+            <button
+              title="Favorite"
+              onclick="event.stopPropagation();toggleFavorite(${Number(note.id)})"
+            >${note.favorite ? '★' : '☆'}</button>
           ` : ''}
 
-          <button title="${filter === 'trash' ? 'Delete permanently' : 'Move to trash'}"
-            onclick="event.stopPropagation();deleteNote(${note.id})">×</button>
+          ${filter === 'trash' ? `
+            <button
+              title="Restore"
+              onclick="event.stopPropagation();restoreNote(${Number(note.id)})"
+            >↩</button>
+          ` : ''}
+
+          <button
+            title="${filter === 'trash' ? 'Delete permanently' : 'Move to trash'}"
+            onclick="event.stopPropagation();deleteNote(${Number(note.id)})"
+          >×</button>
+
         </div>
+
       </div>
+
     </article>
+
   `).join('');
+
 }
 
 function escapeHTML(value) {
+
   return String(value).replace(/[&<>"']/g, char => ({
+
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;'
+
   })[char]);
+
 }
 
 document.getElementById('modal').addEventListener('click', e => {
-  if (e.target.id === 'modal') closeEditor();
+
+  if (e.target.id === 'modal') {
+    closeEditor();
+  }
+
+});
+
+document.addEventListener('keydown', e => {
+
+  if (e.key === 'Escape') {
+    closeEditor();
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+
+    if (document.getElementById('modal').classList.contains('show')) {
+      saveNote();
+    }
+
+  }
+
 });
 
 renderNotes();
+
 </script>
+
 </body>
 </html>
