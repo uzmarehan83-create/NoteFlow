@@ -802,7 +802,8 @@ function renderNotes() {
            String(note.content || '').toLowerCase().includes(query);
 
   });
-  visible.sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
+ 
+    visible.sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
   updateCounts();
 
   document.getElementById('note-count').textContent =
