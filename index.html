@@ -4,263 +4,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NoteFlow 2.1 — Your Space</title>
+<title>NoteFlow 2.2 — Your Space</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-
-:root {
-  --bg:#080f1d;--panel:#0e192b;--card:#132139;
-  --card-hover:#192b47;--border:#203450;
-  --text:#edf4ff;--muted:#91a4bd;
-  --accent:#398cff;--accent-light:#73b3ff;
-}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}
-button,input,textarea{font-family:inherit}
-button{cursor:pointer}
-.app{display:flex;min-height:100vh}
-
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#080f20;
+ color:#eaf0ff;
+ display:flex;
+ min-height:100vh
+}
 .sidebar{
- width:255px;background:var(--panel);border-right:1px solid var(--border);
- padding:28px 18px;display:flex;flex-direction:column;flex-shrink:0
+ width:240px;
+ background:#0d1830;
+ padding:25px 18px;
+ border-right:1px solid #243453;
+ flex-shrink:0
 }
-.logo{font-size:27px;font-weight:800;letter-spacing:-1.5px;margin:0 0 48px 9px}
-.logo span{color:var(--accent)}
-.nav-label{font-size:10px;color:var(--muted);letter-spacing:2px;font-weight:800;margin:0 0 13px 12px}
-.nav-item{
- padding:13px;border-radius:10px;margin-bottom:7px;color:var(--muted);
- cursor:pointer;font-size:14px;font-weight:600;transition:.25s;
- display:flex;align-items:center;gap:12px
+.logo{font-size:25px;font-weight:bold;color:#8db5ff;margin-bottom:35px}
+.nav{
+ padding:13px;
+ margin:7px 0;
+ border-radius:10px;
+ cursor:pointer;
+ color:#b9c8e8
 }
-.nav-item:hover,.nav-item.active{background:#1b3456;color:var(--accent-light)}
-.nav-icon{font-size:17px}
-.nav-count{margin-left:auto;font-size:11px;opacity:.75}
-.sidebar-bottom{
- margin-top:auto;padding:16px 10px;border-top:1px solid var(--border);
- color:var(--muted);font-size:12px;line-height:1.8
+.nav:hover,.nav.active{background:#20375f;color:white}
+main{flex:1;padding:30px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0 0 8px}
+.subtitle{color:#94a7ca}
+button{
+ border:0;
+ padding:11px 16px;
+ border-radius:9px;
+ background:#477eea;
+ color:white;
+ cursor:pointer;
+ font-weight:bold
 }
-.main{flex:1;min-width:0;padding:42px 5%}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:43px}
-.greeting h1{font-size:31px;margin:0;letter-spacing:-1.2px}
-.greeting p{color:var(--muted);font-size:13px;margin-top:9px}
-.top-actions{display:flex;gap:11px}
-.search{
- background:var(--panel);border:1px solid var(--border);padding:13px 16px;
- border-radius:11px;color:white;outline:none;width:235px;transition:.2s
+button:hover{filter:brightness(1.12)}
+button.secondary{background:#263957}
+button.danger{background:#a63d50}
+input,textarea{
+ width:100%;
+ background:#111f39;
+ color:white;
+ border:1px solid #344969;
+ padding:13px;
+ border-radius:9px;
+ outline:none;
+ font:inherit
 }
-.search:focus,.editor-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #398cff20}
-.new-btn{
- background:var(--accent);color:white;padding:13px 20px;border-radius:11px;
- font-weight:700;border:none;transition:.2s;white-space:nowrap
+input:focus,textarea:focus{border-color:#76a5ff}
+.search{margin:25px 0 18px;max-width:500px}
+.notes{
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+ gap:16px;
+ margin-top:20px
 }
-.new-btn:hover{background:#2474dc;transform:translateY(-2px)}
-.section-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-.section-heading h2{font-size:18px;margin:0}
-.section-heading span{color:var(--muted);font-size:12px}
-.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:18px}
-.note-card{
- background:var(--card);border:1px solid var(--border);border-radius:15px;
- padding:21px;min-height:195px;display:flex;flex-direction:column;
- cursor:pointer;transition:.25s;animation:appear .35s ease both;overflow-wrap:anywhere
+.note{
+ background:#111f39;
+ border:1px solid #263b5d;
+ padding:18px;
+ border-radius:13px;
+ min-height:170px;
+ display:flex;
+ flex-direction:column;
+ gap:12px
 }
-.note-card:hover{transform:translateY(-5px);background:var(--card-hover);border-color:var(--accent);box-shadow:0 12px 30px #0004}
-.note-card.pinned{border-color:var(--accent);box-shadow:0 0 0 1px #398cff30}
-.note-card h3{font-size:16px;margin:0 0 13px;font-weight:700}
-.note-card p{font-size:13px;line-height:1.8;color:var(--muted);margin:0;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
-.note-footer{margin-top:auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;gap:10px}
-.note-actions{display:flex;gap:8px}
-.note-actions button{
- background:#203450;color:var(--muted);border:none;border-radius:7px;
- width:29px;height:29px;font-size:15px;transition:.2s
+.note h3{margin:0;overflow-wrap:anywhere}
+.note p{
+ color:#aebedb;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ flex:1;
+ margin:0
 }
-.note-actions button:hover{color:white;background:var(--accent)}
-.empty{grid-column:1/-1;text-align:center;padding:80px 15px;color:var(--muted)}
-.empty div{font-size:42px;margin-bottom:17px}
-.empty strong{color:var(--text);font-size:17px}
-.empty p{font-size:13px}
-
+.note-actions{display:flex;gap:7px;flex-wrap:wrap}
+.note-actions button{padding:8px 10px;font-size:12px}
+.note small{color:#8095ba}
+.empty{color:#91a5c8;margin-top:40px}
 .modal{
- display:none;position:fixed;inset:0;background:#020814dd;
- backdrop-filter:blur(7px);z-index:5;justify-content:center;
- align-items:center;padding:15px
+ display:none;
+ position:fixed;
+ inset:0;
+ background:#000b;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+ z-index:10
 }
-.modal.show{display:flex;animation:fade .2s ease}
-.editor{
- width:100%;max-width:650px;background:var(--panel);
- border:1px solid var(--border);border-radius:19px;padding:27px;
- box-shadow:0 25px 80px #0008;animation:appear .25s ease
+.modal-box{
+ background:#101e38;
+ border:1px solid #344969;
+ padding:24px;
+ border-radius:15px;
+ width:min(500px,100%)
 }
-.editor-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
-.editor-top h2{font-size:20px;margin:0}
-.close-btn{background:transparent;color:var(--muted);font-size:27px;border:none}
-.close-btn:hover{color:white}
-.editor-input{
- width:100%;background:#091426;border:1px solid var(--border);
- border-radius:10px;padding:15px;margin-bottom:14px;color:white;
- outline:none;font-size:14px
-}
-textarea.editor-input{min-height:240px;resize:vertical;line-height:1.8}
-.editor-bottom{display:flex;justify-content:flex-end;gap:11px}
-.cancel-btn,.save-btn{padding:12px 20px;border-radius:9px;border:none;font-weight:700}
-.cancel-btn{background:#203047;color:white}
-.save-btn{background:var(--accent);color:white}
-.save-btn:hover{background:#2474dc}
-.security-note{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 15px}
-
-@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-
-@media(max-width:750px){
- .sidebar{width:75px;padding:20px 8px}
- .logo{font-size:16px;margin:0 0 38px;text-align:center}
- .logo span,.nav-label,.nav-text,.nav-count,.sidebar-bottom{display:none}
- .nav-item{justify-content:center;padding:14px 5px;font-size:19px}
- .main{padding:27px 17px}
- .topbar{flex-direction:column;align-items:stretch;margin-bottom:30px}
- .top-actions{flex-wrap:wrap}
- .search{flex:1;min-width:100px}
- .greeting h1{font-size:25px}
-}
-@media(max-width:420px){
- .new-btn{padding:12px}
- .notes-grid{grid-template-columns:1fr}
+.modal-box h2{margin-top:0}
+.modal-box textarea{height:180px;resize:vertical;margin:12px 0}
+.modal-box input{margin:8px 0}
+.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:650px){
+ body{display:block}
+ .sidebar{width:100%;padding:15px}
+ .logo{margin-bottom:12px}
+ .sidebar nav{display:flex;flex-wrap:wrap}
+ main{padding:20px}
 }
 </style>
 </head>
 
 <body>
-<div class="app">
+
 <aside class="sidebar">
- <div class="logo">Note<span>Flow.</span></div>
- <div class="nav-label">WORKSPACE</div>
-
- <div class="nav-item active" onclick="setFilter('all',this)">
-  <span class="nav-icon">▤</span><span class="nav-text">All Notes</span>
-  <span class="nav-count" id="all-count">0</span>
- </div>
- <div class="nav-item" onclick="setFilter('favorites',this)">
-  <span class="nav-icon">☆</span><span class="nav-text">Favorites</span>
-  <span class="nav-count" id="favorite-count">0</span>
- </div>
- <div class="nav-item" onclick="setFilter('trash',this)">
-  <span class="nav-icon">▱</span><span class="nav-text">Trash</span>
-  <span class="nav-count" id="trash-count">0</span>
- </div>
-
- <div class="sidebar-bottom">
-  <strong style="color:#73b3ff">NoteFlow 2.1</strong><br>
-  Your thoughts, organized.<br><br>© 2026 NoteFlow
- </div>
+ <div class="logo">▤ NoteFlow</div>
+ <div class="nav active" data-view="all" onclick="changeView('all')">▤ All Notes <span id="allCount"></span></div>
+ <div class="nav" data-view="favorites" onclick="changeView('favorites')">☆ Favorites</div>
+ <div class="nav" data-view="trash" onclick="changeView('trash')">▱ Trash</div>
+ <p style="color:#7187ad;font-size:12px;margin-top:35px">YOUR PERSONAL WORKSPACE</p>
+ <small style="color:#7187ad">NoteFlow 2.2</small>
 </aside>
 
-<main class="main">
- <header class="topbar">
-  <div class="greeting">
+<main>
+ <div class="top">
+  <div>
    <h1 id="heading">Your Notes ✨</h1>
-   <p>Capture your thoughts. Keep your ideas flowing.</p>
+   <div class="subtitle">Capture your thoughts. Keep your ideas.</div>
   </div>
-  <div class="top-actions">
-   <input class="search" id="search" placeholder="⌕ Search your notes..." oninput="renderNotes()">
-   <button class="new-btn" onclick="openEditor()">+ New Note</button>
-  </div>
- </header>
-
- <div class="section-heading">
-  <h2 id="section-title">All Notes</h2>
-  <span id="note-count">0 notes</span>
+  <button id="newButton" onclick="openEditor()">+ New Note</button>
  </div>
- <div class="notes-grid" id="notes-grid"></div>
-</main>
-</div>
 
-<div class="modal" id="modal">
- <div class="editor">
-  <div class="editor-top">
-   <h2 id="editor-heading">Create a Note</h2>
-   <button class="close-btn" onclick="closeEditor()">×</button>
+ <input class="search" id="search" placeholder="Search your notes..." oninput="renderNotes()">
+ <div id="notes" class="notes"></div>
+</main>
+
+<div class="modal" id="editor">
+ <div class="modal-box">
+  <h2 id="editorHeading">Create Note</h2>
+  <input id="noteTitle" placeholder="Note title">
+  <textarea id="noteContent" placeholder="Write something..."></textarea>
+  <div id="lockOptions">
+   <label><input type="checkbox" id="makeLocked" style="width:auto"> Password protect this note</label>
+   <input id="newPassword" type="password" placeholder="Create a password (for new locked notes)">
   </div>
-  <input id="note-title" class="editor-input" placeholder="Give your note a title..." maxlength="150">
-  <textarea id="note-content" class="editor-input" placeholder="Start writing your thoughts..."></textarea>
-  <p class="security-note" id="security-note"></p>
-  <div class="editor-bottom">
-   <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
-   <button class="save-btn" onclick="saveNote()">Save Note</button>
+  <div class="modal-actions">
+   <button onclick="saveNote()">Save Note</button>
+   <button class="secondary" onclick="closeEditor()">Cancel</button>
   </div>
  </div>
 </div>
 
 <script>
-let notes=[];
-try{
- const stored=JSON.parse(localStorage.getItem('noteflow_notes')||'[]');
- notes=Array.isArray(stored)?stored:[];
-}catch{notes=[]}
+const STORAGE_KEY='noteflow_notes';
 
-let filter='all';
+let notes=[];
+let view='all';
 let editingId=null;
-let editingPassword=null;
-const unlockedNotes=new Map();
+let unlockedNotes=new Set();
+
+function loadNotes(){
+ try{
+  const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+  notes=Array.isArray(stored)?stored:[];
+ }catch{
+  notes=[];
+ }
+}
 
 function persist(){
  try{
-  localStorage.setItem('noteflow_notes',JSON.stringify(notes));
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(notes));
   return true;
- }catch{
-  alert('Could not save your notes. Check your browser storage.');
+ }catch(error){
+  alert('Could not save your notes. Your browser storage may be full.');
   return false;
  }
+}
+
+function uid(){
+ return Date.now().toString(36)+Math.random().toString(36).slice(2);
+}
+
+function changeView(next){
+ view=next;
+ document.querySelectorAll('.nav').forEach(el=>{
+  el.classList.toggle('active',el.dataset.view===next);
+ });
+ document.getElementById('heading').textContent=
+  next==='all'?'Your Notes ✨':
+  next==='favorites'?'Your Favorites ☆':'Trash ▱';
+ document.getElementById('newButton').style.display=next==='trash'?'none':'block';
+ renderNotes();
+}
+
+async function hashPassword(password,salt){
+ const encoder=new TextEncoder();
+ const keyMaterial=await crypto.subtle.importKey(
+  'raw',encoder.encode(password),'PBKDF2',false,['deriveKey']
+ );
+ return crypto.subtle.deriveKey(
+  {name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},
+  keyMaterial,{name:'AES-GCM',length:256},false,['encrypt','decrypt']
+ );
 }
 
 function toBase64(bytes){
  return btoa(String.fromCharCode(...new Uint8Array(bytes)));
 }
+
 function fromBase64(value){
  return Uint8Array.from(atob(value),c=>c.charCodeAt(0));
 }
 
-async function deriveKey(password,salt){
- const material=await crypto.subtle.importKey(
-  'raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']
- );
- return crypto.subtle.deriveKey(
-  {name:'PBKDF2',salt,iterations:310000,hash:'SHA-256'},
-  material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']
- );
-}
-
-async function encryptData(data,password){
+async function encryptData(text,password){
  const salt=crypto.getRandomValues(new Uint8Array(16));
  const iv=crypto.getRandomValues(new Uint8Array(12));
- const key=await deriveKey(password,salt);
+ const key=await hashPassword(password,salt);
  const encrypted=await crypto.subtle.encrypt(
-  {name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(data))
+  {name:'AES-GCM',iv},key,new TextEncoder().encode(text)
  );
- return{
+ return {
   salt:toBase64(salt),
   iv:toBase64(iv),
-  ciphertext:toBase64(encrypted)
+  data:toBase64(encrypted)
  };
 }
 
 async function decryptData(note,password){
- const key=await deriveKey(password,fromBase64(note.salt));
+ const key=await hashPassword(password,fromBase64(note.salt));
  const decrypted=await crypto.subtle.decrypt(
   {name:'AES-GCM',iv:fromBase64(note.iv)},
-  key,fromBase64(note.ciphertext)
+  key,fromBase64(note.data)
  );
  return JSON.parse(new TextDecoder().decode(decrypted));
 }
 
-// Always asks for the password and verifies it without unlocking the note.
+function openEditor(id=null){
+ editingId=id;
+ const note=id?notes.find(n=>n.id===id):null;
+ if(note&&note.locked){
+  alert('Locked notes must be unlocked before editing.');
+  return;
+ }
+ document.getElementById('editorHeading').textContent=note?'Edit Note':'Create Note';
+ document.getElementById('noteTitle').value=note?.title||'';
+ document.getElementById('noteContent').value=note?.content||'';
+ document.getElementById('makeLocked').checked=false;
+ document.getElementById('newPassword').value='';
+ document.getElementById('lockOptions').style.display=note?'none':'block';
+ document.getElementById('editor').style.display='flex';
+}
+
+function closeEditor(){
+ document.getElementById('editor').style.display='none';
+}
+
+async function saveNote(){
+ const title=document.getElementById('noteTitle').value.trim();
+ const content=document.getElementById('noteContent').value.trim();
+ if(!title&&!content){
+  alert('Please write a title or some content.');
+  return;
+ }
+
+ if(editingId){
+  const note=notes.find(n=>n.id===editingId);
+  if(!note)return;
+  note.title=title||'Untitled';
+  note.content=content;
+  note.updated=Date.now();
+ }else{
+  const locked=document.getElementById('makeLocked').checked;
+  let note={
+   id:uid(),
+   title:title||'Untitled',
+   content,
+   favorite:false,
+   pinned:false,
+   trash:false,
+   locked:false,
+   created:Date.now(),
+   updated:Date.now()
+  };
+
+  if(locked){
+   if(!crypto.subtle){
+    alert('Secure encryption is unavailable in this browser. Open the HTTPS website.');
+    return;
+   }
+   const password=document.getElementById('newPassword').value;
+   if(!password){
+    alert('Please create a password.');
+    return;
+   }
+   try{
+    const encrypted=await encryptData(
+     JSON.stringify({title:note.title,content:note.content}),password
+    );
+    note={...note,...encrypted,locked:true};
+    delete note.title;
+    delete note.content;
+   }catch(error){
+    alert('Could not protect this note.');
+    return;
+   }
+  }
+  notes.unshift(note);
+ }
+
+ if(!persist())return;
+ closeEditor();
+ renderNotes();
+}
+
+async function unlockNote(note){
+ const password=prompt('Enter the password for this note:');
+ if(password===null)return null;
+ try{
+  const data=await decryptData(note,password);
+  unlockedNotes.add(note.id);
+  return data;
+ }catch{
+  alert('Incorrect password.');
+  return null;
+ }
+}
+
 async function verifyNotePassword(note){
- const password=prompt('🔐 Enter this note\\'s password to confirm deletion:');
+ const password=prompt('🔐 Enter this note’s password to confirm deletion:');
  if(password===null)return false;
- if(password===''){
+ if(!password){
   alert('A password is required.');
   return false;
  }
-
  try{
   await decryptData(note,password);
   return true;
@@ -270,210 +351,46 @@ async function verifyNotePassword(note){
  }
 }
 
-function updateCounts(){
- document.getElementById('all-count').textContent=notes.filter(n=>!n.trash).length;
- document.getElementById('favorite-count').textContent=notes.filter(n=>n.favorite&&!n.trash).length;
- document.getElementById('trash-count').textContent=notes.filter(n=>n.trash).length;
-}
-
-function setFilter(value,element){
- filter=value;
- document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
- element.classList.add('active');
- const labels={all:'All Notes',favorites:'Favorites',trash:'Trash'};
- document.getElementById('heading').textContent=value==='all'?'Your Notes ✨':labels[value];
- document.getElementById('section-title').textContent=labels[value];
- renderNotes();
-}
-
-async function getNoteData(note){
- if(!note.locked){
-  return {data:{title:note.title,content:note.content},password:null};
- }
- if(unlockedNotes.has(note.id))return unlockedNotes.get(note.id);
-
- const password=prompt('🔒 Enter the password to unlock this note:');
- if(password===null||password==='')return null;
-
- try{
-  const data=await decryptData(note,password);
-  const result={data,password};
-  unlockedNotes.set(note.id,result);
-  return result;
- }catch{
-  alert('Incorrect password. This note is still locked.');
-  return null;
- }
-}
-
-async function openEditor(id=null){
- editingId=id;
- editingPassword=null;
+async function openNote(id){
  const note=notes.find(n=>n.id===id);
- let data={title:'',content:''};
-
- if(note){
-  const result=await getNoteData(note);
-  if(!result){editingId=null;return;}
-  data=result.data;
-  editingPassword=result.password;
- }
-
- document.getElementById('editor-heading').textContent=note?'Edit Note':'Create a Note';
- document.getElementById('note-title').value=data.title||'';
- document.getElementById('note-content').value=data.content||'';
- document.getElementById('security-note').textContent=
-  note&&note.locked?'🔐 This note is encrypted. Save changes to update its encrypted contents.':'';
- document.getElementById('modal').classList.add('show');
- document.getElementById('note-title').focus();
-}
-
-function closeEditor(){
- document.getElementById('modal').classList.remove('show');
- editingId=null;
- editingPassword=null;
-}
-
-async function saveNote(){
- const title=document.getElementById('note-title').value.trim();
- const content=document.getElementById('note-content').value.trim();
-
- if(!title&&!content){
-  alert('Please write something first!');
-  return;
- }
-
- if(editingId!==null){
-  const note=notes.find(n=>n.id===editingId);
-  if(!note)return;
-
-  if(note.locked){
-   if(!editingPassword){
-    alert('Please unlock this note again.');
-    return;
-   }
-   try{
-    const encrypted=await encryptData(
-     {title:title||'Untitled Note',content},editingPassword
-    );
-    Object.assign(note,encrypted);
-    unlockedNotes.set(note.id,{
-     data:{title:title||'Untitled Note',content},
-     password:editingPassword
-    });
-   }catch{
-    alert('Could not encrypt this note. Please try again.');
-    return;
-   }
-  }else{
-   note.title=title||'Untitled Note';
-   note.content=content;
-  }
-  note.updated=new Date().toLocaleDateString();
- }else{
-  notes.unshift({
-   id:Date.now(),title:title||'Untitled Note',content,
-   favorite:false,pinned:false,trash:false,locked:false,
-   updated:new Date().toLocaleDateString()
-  });
- }
-
- if(!persist())return;
- closeEditor();
- renderNotes();
-}
-
-async function toggleLock(id){
- const note=notes.find(n=>n.id===id);
- if(!note||note.trash)return;
-
- if(note.locked&&unlockedNotes.has(id)){
-  unlockedNotes.delete(id);
-  renderNotes();
-  alert('🔒 Note locked again.');
-  return;
- }
-
+ if(!note)return;
  if(note.locked){
-  const result=await getNoteData(note);
-  if(result){
-   renderNotes();
-   alert('🔓 Note unlocked.');
-  }
-  return;
- }
-
- if(!window.crypto||!crypto.subtle){
-  alert('Secure encryption is unavailable. Please open NoteFlow using HTTPS.');
-  return;
- }
-
- const password=prompt('Create a password for this note (at least 8 characters):');
- if(password===null)return;
- if(password.length<8){
-  alert('Please use a password with at least 8 characters.');
-  return;
- }
-
- const confirmPassword=prompt('Confirm your new password:');
- if(confirmPassword===null)return;
- if(password!==confirmPassword){
-  alert('The passwords do not match.');
-  return;
- }
-
- try{
-  const encrypted=await encryptData({
-   title:note.title||'Untitled Note',
-   content:note.content||''
-  },password);
-
-  Object.assign(note,encrypted);
-  note.locked=true;
-  delete note.title;
-  delete note.content;
-  unlockedNotes.delete(id);
-
-  if(!persist())return;
-  renderNotes();
-  alert('🔒 Note locked successfully!');
- }catch(error){
-  console.error(error);
-  alert('Could not lock this note. Please try again.');
+  const data=await unlockNote(note);
+  if(!data)return;
+  document.getElementById('editor').style.display='flex';
+  document.getElementById('editorHeading').textContent='Locked Note — View Only';
+  document.getElementById('noteTitle').value=data.title;
+  document.getElementById('noteContent').value=data.content;
+  document.getElementById('noteTitle').readOnly=true;
+  document.getElementById('noteContent').readOnly=true;
+  document.getElementById('lockOptions').style.display='none';
+  document.querySelector('#editor .modal-actions').innerHTML=
+   '<button class="secondary" onclick="closeLockedViewer()">Close</button>';
+ }else{
+  openEditor(id);
  }
 }
 
-function togglePin(id){
- const note=notes.find(n=>n.id===id);
- if(!note||note.trash)return;
- note.pinned=!note.pinned;
- if(!persist())return;
- renderNotes();
+function closeLockedViewer(){
+ document.getElementById('noteTitle').readOnly=false;
+ document.getElementById('noteContent').readOnly=false;
+ document.querySelector('#editor .modal-actions').innerHTML=
+  '<button onclick="saveNote()">Save Note</button><button class="secondary" onclick="closeEditor()">Cancel</button>';
+ closeEditor();
 }
 
-function toggleFavorite(id){
- const note=notes.find(n=>n.id===id);
- if(!note||note.trash)return;
- note.favorite=!note.favorite;
- if(!persist())return;
- renderNotes();
-}
-
-// Password verification is required for BOTH trash and permanent deletion.
 async function deleteNote(id){
  const note=notes.find(n=>n.id===id);
  if(!note)return;
 
- if(filter==='trash'){
-  if(!confirm('Permanently delete this note? This cannot be undone.'))return;
- } 
-
+ // Password verification happens before either deletion action.
  if(note.locked){
   const correct=await verifyNotePassword(note);
   if(!correct)return;
  }
 
- if(filter==='trash'){
+ if(note.trash){
+  if(!confirm('Permanently delete this note? This cannot be undone.'))return;
   notes=notes.filter(n=>n.id!==id);
   unlockedNotes.delete(id);
  }else{
@@ -481,7 +398,11 @@ async function deleteNote(id){
   unlockedNotes.delete(id);
  }
 
- if(!persist())return;
+ if(!persist()){
+  loadNotes();
+  renderNotes();
+  return;
+ }
  renderNotes();
 }
 
@@ -489,107 +410,90 @@ function restoreNote(id){
  const note=notes.find(n=>n.id===id);
  if(!note)return;
  note.trash=false;
- if(!persist())return;
+ persist();
  renderNotes();
 }
 
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,char=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- })[char]);
+function toggleFavorite(id){
+ const note=notes.find(n=>n.id===id);
+ if(!note)return;
+ note.favorite=!note.favorite;
+ persist();
+ renderNotes();
+}
+
+function togglePin(id){
+ const note=notes.find(n=>n.id===id);
+ if(!note)return;
+ note.pinned=!note.pinned;
+ persist();
+ renderNotes();
 }
 
 function renderNotes(){
- const grid=document.getElementById('notes-grid');
- const query=document.getElementById('search').value.toLowerCase().trim();
+ const container=document.getElementById('notes');
+ const query=document.getElementById('search').value.toLowerCase();
+ document.getElementById('allCount').textContent=
+  '('+notes.filter(n=>!n.trash).length+')';
 
  let visible=notes.filter(note=>{
-  if(filter==='all'&&note.trash)return false;
-  if(filter==='favorites'&&(!note.favorite||note.trash))return false;
-  if(filter==='trash'&&!note.trash)return false;
-
-  const unlocked=note.locked?unlockedNotes.get(note.id):null;
-
-  if(note.locked&&!unlocked){
-   return !query||'locked note'.includes(query);
+  if(view==='trash'?!note.trash:note.trash)return false;
+  if(view==='favorites'&&!note.favorite)return false;
+  if(note.locked){
+   return query===''&&true;
   }
-
-  const title=unlocked?unlocked.data.title:note.title;
-  const content=unlocked?unlocked.data.content:note.content;
-
-  return String(title||'').toLowerCase().includes(query)||
-         String(content||'').toLowerCase().includes(query);
+  return (note.title+' '+note.content).toLowerCase().includes(query);
  });
 
- if(filter!=='trash'){
-  visible.sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));
- }
-
- updateCounts();
- document.getElementById('note-count').textContent=
-  visible.length+(visible.length===1?' note':' notes');
+ visible.sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updated||0)-(a.updated||0)));
 
  if(!visible.length){
-  const messages={
-   all:['📝','No notes yet','Create your first note and start organizing your thoughts.'],
-   favorites:['⭐','No favorites yet','Star your important notes to find them here.'],
-   trash:['🗑️','Your trash is empty','Deleted notes will appear here.']
-  };
-  const [icon,title,description]=messages[filter];
-  grid.innerHTML=`<div class="empty"><div>${icon}</div><strong>${title}</strong><p>${description}</p></div>`;
+  container.innerHTML='<div class="empty">No notes here yet. Create a note to get started!</div>';
   return;
  }
 
- grid.innerHTML=visible.map(note=>{
-  const unlocked=note.locked?unlockedNotes.get(note.id):null;
-  const hidden=note.locked&&!unlocked;
-  const title=hidden?'🔒 Locked Note':
-    (unlocked?unlocked.data.title:note.title);
-  const content=hidden?'This note is password protected.':
-    (unlocked?unlocked.data.content:note.content);
+ container.innerHTML='';
+ visible.forEach(note=>{
+  const card=document.createElement('article');
+  card.className='note';
 
-  return `
-   <article class="note-card ${note.pinned&&filter!=='trash'?'pinned':''}"
-    onclick="openEditor(${Number(note.id)})">
-    <h3>${escapeHTML(title||'Untitled Note')}</h3>
-    <p>${escapeHTML(content||'No additional content...')}</p>
-    <div class="note-footer">
-     <span>${escapeHTML(note.updated||'')}</span>
-     <div class="note-actions">
-      ${filter!=='trash'?`
-       <button title="${note.pinned?'Unpin':'Pin'}" aria-label="Toggle pin"
-        onclick="event.stopPropagation();togglePin(${Number(note.id)})">${note.pinned?'📌':'📍'}</button>
-       <button title="Favorite" aria-label="Toggle favorite"
-        onclick="event.stopPropagation();toggleFavorite(${Number(note.id)})">${note.favorite?'★':'☆'}</button>
-       <button title="${note.locked?(unlocked?'Lock note':'Unlock note'):'Lock note'}"
-        aria-label="Toggle note lock"
-        onclick="event.stopPropagation();toggleLock(${Number(note.id)})">${note.locked?(unlocked?'🔓':'🔒'):'🔐'}</button>
-      `:''}
-      ${filter==='trash'?`
-       <button title="Restore" aria-label="Restore note"
-        onclick="event.stopPropagation();restoreNote(${Number(note.id)})">↩</button>
-      `:''}
-      <button title="${filter==='trash'?'Delete permanently':'Move to trash'}"
-       aria-label="Delete note"
-       onclick="event.stopPropagation();deleteNote(${Number(note.id)})">×</button>
-     </div>
-    </div>
-   </article>
-  `;
- }).join('');
+  const title=document.createElement('h3');
+  title.textContent=note.locked?'🔒 Locked Note':note.title;
+
+  const content=document.createElement('p');
+  content.textContent=note.locked?'Your private note is protected.':note.content;
+
+  const date=document.createElement('small');
+  date.textContent=note.pinned?'📌 Pinned · '+new Date(note.updated||note.created).toLocaleDateString():
+   new Date(note.updated||note.created).toLocaleDateString();
+
+  const actions=document.createElement('div');
+  actions.className='note-actions';
+
+  function addButton(label,handler,cls='secondary'){
+   const btn=document.createElement('button');
+   btn.textContent=label;
+   btn.className=cls;
+   btn.onclick=handler;
+   actions.appendChild(btn);
+  }
+
+  if(note.trash){
+   addButton('Restore',()=>restoreNote(note.id));
+   addButton('Delete permanently',()=>deleteNote(note.id),'danger');
+  }else{
+   addButton('Open',()=>openNote(note.id));
+   addButton(note.favorite?'★':'☆',()=>toggleFavorite(note.id));
+   addButton(note.pinned?'Unpin':'📌 Pin',()=>togglePin(note.id));
+   addButton('Delete',()=>deleteNote(note.id),'danger');
+  }
+
+  card.append(title,content,date,actions);
+  container.appendChild(card);
+ });
 }
 
-document.getElementById('modal').addEventListener('click',e=>{
- if(e.target.id==='modal')closeEditor();
-});
-
-document.addEventListener('keydown',e=>{
- if(e.key==='Escape')closeEditor();
- if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){
-  if(document.getElementById('modal').classList.contains('show'))saveNote();
- }
-});
-
+loadNotes();
 renderNotes();
 </script>
 </body>
