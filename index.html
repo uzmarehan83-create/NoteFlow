@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NoteFlow 2.0 — Your Space</title>
+<title>NoteFlow 2.1 — Your Space</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
@@ -149,7 +149,7 @@ textarea.editor-input{min-height:240px;resize:vertical;line-height:1.8}
  </div>
 
  <div class="sidebar-bottom">
-  <strong style="color:#73b3ff">NoteFlow 2.0</strong><br>
+  <strong style="color:#73b3ff">NoteFlow 2.1</strong><br>
   Your thoughts, organized.<br><br>© 2026 NoteFlow
  </div>
 </aside>
@@ -252,6 +252,24 @@ async function decryptData(note,password){
  return JSON.parse(new TextDecoder().decode(decrypted));
 }
 
+// Always asks for the password and verifies it without unlocking the note.
+async function verifyNotePassword(note){
+ const password=prompt('🔐 Enter this note\\'s password to confirm deletion:');
+ if(password===null)return false;
+ if(password===''){
+  alert('A password is required.');
+  return false;
+ }
+
+ try{
+  await decryptData(note,password);
+  return true;
+ }catch{
+  alert('Incorrect password. The note was NOT deleted.');
+  return false;
+ }
+}
+
 function updateCounts(){
  document.getElementById('all-count').textContent=notes.filter(n=>!n.trash).length;
  document.getElementById('favorite-count').textContent=notes.filter(n=>n.favorite&&!n.trash).length;
@@ -272,9 +290,7 @@ async function getNoteData(note){
  if(!note.locked){
   return {data:{title:note.title,content:note.content},password:null};
  }
- if(unlockedNotes.has(note.id)){
-  return unlockedNotes.get(note.id);
- }
+ if(unlockedNotes.has(note.id))return unlockedNotes.get(note.id);
 
  const password=prompt('🔒 Enter the password to unlock this note:');
  if(password===null||password==='')return null;
@@ -388,7 +404,7 @@ async function toggleLock(id){
  }
 
  if(!window.crypto||!crypto.subtle){
-  alert('Secure encryption is unavailable. Please open NoteFlow using its HTTPS website.');
+  alert('Secure encryption is unavailable. Please open NoteFlow using HTTPS.');
   return;
  }
 
@@ -414,12 +430,8 @@ async function toggleLock(id){
 
   Object.assign(note,encrypted);
   note.locked=true;
-
-  // Remove the original readable title and content.
   delete note.title;
   delete note.content;
-
-  // Do not keep the decrypted note in memory after locking.
   unlockedNotes.delete(id);
 
   if(!persist())return;
@@ -447,17 +459,28 @@ function toggleFavorite(id){
  renderNotes();
 }
 
-function deleteNote(id){
+// Password verification is required for BOTH trash and permanent deletion.
+async function deleteNote(id){
  const note=notes.find(n=>n.id===id);
  if(!note)return;
 
  if(filter==='trash'){
-  if(!confirm('Permanently delete this note?'))return;
+  if(!confirm('Permanently delete this note? This cannot be undone.'))return;
+ } 
+
+ if(note.locked){
+  const correct=await verifyNotePassword(note);
+  if(!correct)return;
+ }
+
+ if(filter==='trash'){
   notes=notes.filter(n=>n.id!==id);
   unlockedNotes.delete(id);
  }else{
   note.trash=true;
+  unlockedNotes.delete(id);
  }
+
  if(!persist())return;
  renderNotes();
 }
@@ -487,7 +510,6 @@ function renderNotes(){
 
   const unlocked=note.locked?unlockedNotes.get(note.id):null;
 
-  // Locked notes are searchable only as "Locked Note".
   if(note.locked&&!unlocked){
    return !query||'locked note'.includes(query);
   }
@@ -521,8 +543,6 @@ function renderNotes(){
  grid.innerHTML=visible.map(note=>{
   const unlocked=note.locked?unlockedNotes.get(note.id):null;
   const hidden=note.locked&&!unlocked;
-
-  // Never display the real title or content of a locked note.
   const title=hidden?'🔒 Locked Note':
     (unlocked?unlocked.data.title:note.title);
   const content=hidden?'This note is password protected.':
