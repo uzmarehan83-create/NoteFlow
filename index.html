@@ -200,9 +200,6 @@ try{
 let filter='all';
 let editingId=null;
 let editingPassword=null;
-
-// Decrypted notes and passwords exist only in memory.
-// Refreshing the page clears this map and locks encrypted notes again.
 const unlockedNotes=new Map();
 
 function persist(){
@@ -272,12 +269,15 @@ function setFilter(value,element){
 }
 
 async function getNoteData(note){
- if(!note.locked)return{data:{title:note.title,content:note.content},password:null};
- if(unlockedNotes.has(note.id))return unlockedNotes.get(note.id);
+ if(!note.locked){
+  return {data:{title:note.title,content:note.content},password:null};
+ }
+ if(unlockedNotes.has(note.id)){
+  return unlockedNotes.get(note.id);
+ }
 
  const password=prompt('🔒 Enter the password to unlock this note:');
- if(password===null)return null;
- if(!password){alert('Please enter your password.');return null;}
+ if(password===null||password==='')return null;
 
  try{
   const data=await decryptData(note,password);
@@ -293,7 +293,7 @@ async function getNoteData(note){
 async function openEditor(id=null){
  editingId=id;
  editingPassword=null;
- let note=notes.find(n=>n.id===id);
+ const note=notes.find(n=>n.id===id);
  let data={title:'',content:''};
 
  if(note){
@@ -322,13 +322,20 @@ async function saveNote(){
  const title=document.getElementById('note-title').value.trim();
  const content=document.getElementById('note-content').value.trim();
 
- if(!title&&!content){alert('Please write something first!');return;}
+ if(!title&&!content){
+  alert('Please write something first!');
+  return;
+ }
 
  if(editingId!==null){
   const note=notes.find(n=>n.id===editingId);
   if(!note)return;
 
   if(note.locked){
+   if(!editingPassword){
+    alert('Please unlock this note again.');
+    return;
+   }
    try{
     const encrypted=await encryptData(
      {title:title||'Untitled Note',content},editingPassword
@@ -364,26 +371,28 @@ async function toggleLock(id){
  const note=notes.find(n=>n.id===id);
  if(!note||note.trash)return;
 
- // Relock a note that is currently unlocked in this browser session.
  if(note.locked&&unlockedNotes.has(id)){
   unlockedNotes.delete(id);
   renderNotes();
+  alert('🔒 Note locked again.');
   return;
  }
 
- // Unlock an already encrypted note.
  if(note.locked){
-  await getNoteData(note);
-  renderNotes();
+  const result=await getNoteData(note);
+  if(result){
+   renderNotes();
+   alert('🔓 Note unlocked.');
+  }
   return;
  }
 
- if(!crypto.subtle){
-  alert('Secure encryption is unavailable. Please open NoteFlow using HTTPS.');
+ if(!window.crypto||!crypto.subtle){
+  alert('Secure encryption is unavailable. Please open NoteFlow using its HTTPS website.');
   return;
  }
 
- const password=prompt('Create a password for this note:');
+ const password=prompt('Create a password for this note (at least 8 characters):');
  if(password===null)return;
  if(password.length<8){
   alert('Please use a password with at least 8 characters.');
@@ -405,25 +414,19 @@ async function toggleLock(id){
 
   Object.assign(note,encrypted);
   note.locked=true;
+
+  // Remove the original readable title and content.
   delete note.title;
   delete note.content;
 
-  unlockedNotes.set(id,{
-   data:{title:JSON.parse(new TextDecoder().decode(
-    new TextEncoder().encode(JSON.stringify({
-     title:note.title||'Untitled Note',content:note.content||''
-    }))
-   )).title,content:''},
-   password
-  });
-
-  // Store no decrypted title or content in the note record.
-  // The actual encrypted data remains in localStorage.
+  // Do not keep the decrypted note in memory after locking.
   unlockedNotes.delete(id);
+
   if(!persist())return;
   renderNotes();
   alert('🔒 Note locked successfully!');
- }catch{
+ }catch(error){
+  console.error(error);
   alert('Could not lock this note. Please try again.');
  }
 }
@@ -483,12 +486,14 @@ function renderNotes(){
   if(filter==='trash'&&!note.trash)return false;
 
   const unlocked=note.locked?unlockedNotes.get(note.id):null;
-  const title=unlocked?unlocked.data.title:note.title;
-  const content=unlocked?unlocked.data.content:note.content;
 
+  // Locked notes are searchable only as "Locked Note".
   if(note.locked&&!unlocked){
    return !query||'locked note'.includes(query);
   }
+
+  const title=unlocked?unlocked.data.title:note.title;
+  const content=unlocked?unlocked.data.content:note.content;
 
   return String(title||'').toLowerCase().includes(query)||
          String(content||'').toLowerCase().includes(query);
@@ -516,8 +521,12 @@ function renderNotes(){
  grid.innerHTML=visible.map(note=>{
   const unlocked=note.locked?unlockedNotes.get(note.id):null;
   const hidden=note.locked&&!unlocked;
-  const title=hidden?'🔒 Locked Note':(unlocked?unlocked.data.title:note.title);
-  const content=hidden?'This note is password protected.':(unlocked?unlocked.data.content:note.content);
+
+  // Never display the real title or content of a locked note.
+  const title=hidden?'🔒 Locked Note':
+    (unlocked?unlocked.data.title:note.title);
+  const content=hidden?'This note is password protected.':
+    (unlocked?unlocked.data.content:note.content);
 
   return `
    <article class="note-card ${note.pinned&&filter!=='trash'?'pinned':''}"
@@ -553,6 +562,7 @@ function renderNotes(){
 document.getElementById('modal').addEventListener('click',e=>{
  if(e.target.id==='modal')closeEditor();
 });
+
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeEditor();
  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){
