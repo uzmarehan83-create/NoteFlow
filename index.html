@@ -6,6 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NoteFlow 2.2 — Your Space</title>
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LHF0QPF63"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8LHF0QPF63');
+</script>
+
 <style>
 *{box-sizing:border-box}
 body{
@@ -236,7 +245,7 @@ async function encryptData(text,password){
 }
 
 async function decryptData(note,password){
- const key=await hashPassword(password,fromBase64(note.salt));
+ const key=await hashPassword(note.salt?password:password,fromBase64(note.salt));
  const decrypted=await crypto.subtle.decrypt(
   {name:'AES-GCM',iv:fromBase64(note.iv)},
   key,fromBase64(note.data)
@@ -383,7 +392,6 @@ async function deleteNote(id){
  const note=notes.find(n=>n.id===id);
  if(!note)return;
 
- // Password verification happens before either deletion action.
  if(note.locked){
   const correct=await verifyNotePassword(note);
   if(!correct)return;
